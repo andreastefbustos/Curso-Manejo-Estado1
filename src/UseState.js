@@ -1,27 +1,38 @@
 import React, { useEffect, useState } from "react";
 
 function UseState({name}){
-    const [value, setValue] = useState('');
-    const [error, setError] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [state, setState] = useState({
+        value: '',
+        error: false,
+        loading: false,
+    })
+    // const [value, setValue] = useState('');
+    // const [error, setError] = useState(false);
+    // const [loading, setLoading] = useState(false);
 
-    console.log(value);
+    console.log(state);
 
     const SECURITY_CODE = "well"
 
     useEffect(() => {
         console.log("Start Effect");
 
-        if(loading){
+        if(state.loading){
             setTimeout(() => {
                 console.log("Verify");
 
-                if(value === SECURITY_CODE){
-                    setLoading(false);
-                    setError(false);
+                if(state.value === SECURITY_CODE){
+                    setState({
+                        ...state,
+                        error: false,
+                        loading:false,
+                    })
                 } else {
-                    setError(true);
-                    setLoading(false);
+                    setState({
+                        ...state,
+                        error: true,
+                        loading:false,
+                    })
                 }
                 
                 console.log("End Verify");
@@ -29,26 +40,37 @@ function UseState({name}){
         }
         
         console.log("End Effect");
-    }, [loading]);
+    }, [state.loading]);
 
     return (
         <div>
             <h2>Delete {name}</h2>
             <p>Please enter the security code to verify that you want to delete</p>
-            {(error && !loading) && (
+            {(state.error && !state.loading) && (
                 <p>Error: Something is wrong</p>
             )}
-            {loading && (
+            {state.loading && (
                 <p>Loading...</p>
             )}
             <input 
                 placeholder="Security code"
-                value={value}
+                value={state.value}
                 onChange={(event) => {
-                    setValue(event.target.value)
+                    setState({
+                        ...state,
+                        value: event.target.value
+                    })
                 }}
             />
-            <button onClick={() => setLoading(true)}>Verify</button>
+            <button onClick={() => {
+                setState({
+                    ...state,
+                    loading: true
+                    })
+                }
+            }
+            >Verify
+            </button>
         </div>
     );
 };
