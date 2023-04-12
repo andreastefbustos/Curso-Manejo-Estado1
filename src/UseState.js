@@ -18,8 +18,9 @@ function UseState({name}){
 
                 if(value === SECURITY_CODE){
                     setLoading(false);
+                    setError(false);
                 } else {
-                    setError(true)
+                    setError(true);
                     setLoading(false);
                 }
                 
