@@ -34,7 +34,7 @@ function UseState({name}){
         <div>
             <h2>Delete {name}</h2>
             <p>Please enter the security code to verify that you want to delete</p>
-            {error && (
+            {(error && !loading) && (
                 <p>Error: Something is wrong</p>
             )}
             {loading && (
