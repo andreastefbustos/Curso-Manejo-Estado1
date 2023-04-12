@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 
 function UseState({name}){
-    const [error, setError] = useState(true);
+    const [value, setValue] = useState('');
+    const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    console.log(value);
+
+    const SECURITY_CODE = "well"
 
     useEffect(() => {
         console.log("Start Effect");
@@ -10,7 +15,14 @@ function UseState({name}){
         if(loading){
             setTimeout(() => {
                 console.log("Verify");
-                setLoading(false);
+
+                if(value === SECURITY_CODE){
+                    setLoading(false);
+                } else {
+                    setError(true)
+                    setLoading(false);
+                }
+                
                 console.log("End Verify");
             }, 3000);
         }
@@ -28,7 +40,13 @@ function UseState({name}){
             {loading && (
                 <p>Loading...</p>
             )}
-            <input placeholder="Security code"/>
+            <input 
+                placeholder="Security code"
+                value={value}
+                onChange={(event) => {
+                    setValue(event.target.value)
+                }}
+            />
             <button onClick={() => setLoading(true)}>Verify</button>
         </div>
     );
