@@ -60,19 +60,17 @@ const reducerSwitch = (state, action) => {
 
 //devuelve un objeto 
 
-const reducerObject = (state) => {
-    return {
-        'ERROR': {
-            ...state,
-                error: true,
-                loading: false
-        },
-        'CHECK': {
-            ...state,
-            loading: false,
-        }
+const reducerObject = (state) => ({
+    'ERROR': {
+        ...state,
+        error: true,
+        loading: false
+    },
+    'CHECK': {
+        ...state,
+        loading: false,
     }
-};
+});
 
 const reducer = (state, action) => {
     //se le pregunta que si dentro de ese objeto existe algun objeto que se llame como action.type[]
