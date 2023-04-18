@@ -1,67 +1,60 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 
-function UseState({name}){
-    const [state, setState] = useState({
-        value: '',
+const initialState = {
+    value: '',
+    error: false,
+    loading: false,
+    deleted: false,
+    confirmed: false,
+};
+
+const reducerObject = (state, payload) => ({
+    'CONFIRM': {
+        ...state,
         error: false,
+        loading:false,
+        confirmed:true,
+    },
+    'ERROR': {
+        ...state,
+        error: true,
         loading: false,
-        deleted: false,
+    },
+    'WRITE': {
+        ...state,
+        value: payload,
+    },
+    'CHECK': {
+        ...state,
+        loading: true,
+    },
+    'DELETE': {
+        ...state,
+        deleted: true,
+    },
+    'RESET': {
+        ...state,
         confirmed: false,
-    })
-    // const [value, setValue] = useState('');
-    // const [error, setError] = useState(false);
-    // const [loading, setLoading] = useState(false);
+        deleted: false,
+        value: '',
+    }
+});
+
+const reducer = (state, action) => {
+    //se le pregunta que si dentro de ese objeto existe algun objeto que se llame como action.type[]
+    if(reducerObject(state)[action.type]){
+        return reducerObject(state, action.payload)[action.type]
+    } else {
+        return state;
+    }
+};
+
+function UseReducer({name}){
+    const [state, dispatch] = useReducer(reducer, initialState)
 
     console.log(state);
 
     const SECURITY_CODE = "well"
-
-    const onConfirm = () => {
-        setState({
-            ...state,
-            error: false,
-            loading:false,
-            confirmed:true,
-        })
-    };
-
-    const onError = () => {
-        setState({
-            ...state,
-            error: true,
-            loading:false,
-        })
-    };
-
-    const onWrite = (newValue) => {
-        setState({
-            ...state,
-            value: newValue,
-        })
-    };
-
-    const onCheck = () => {
-        setState({
-            ...state,
-            loading: true
-        })
-    };
-
-    const onDelete = () => {
-        setState({
-            ...state,
-            deleted: true,
-        })
-    };
-    
-    const onReset = () => {
-        setState({
-            ...state,
-            confirmed: false,
-            deleted: false,
-            value: '',
-        })
-    };
 
     useEffect(() => {
         console.log("Start Effect");
@@ -71,9 +64,15 @@ function UseState({name}){
                 console.log("Verify");
 
                 if(state.value === SECURITY_CODE){
-                    onConfirm();
+                    dispatch({
+                        type: 'CONFIRM'
+                    });
+                    //onConfirm();
                 } else {
-                    onError();
+                    dispatch({
+                        type: 'ERROR'
+                    });
+                    //onError();
                 }
                 
                 console.log("End Verify");
@@ -83,8 +82,6 @@ function UseState({name}){
         console.log("End Effect");
     }, [state.loading]);
 
-    //se puede guardar el return dentro de condicionales
-    //el primer bloque va ser el estado inial 
     if(!state.deleted && !state.confirmed){
         return (
             <div>
@@ -100,11 +97,16 @@ function UseState({name}){
                     placeholder="Security code"
                     value={state.value}
                     onChange={(event) => {
-                        onWrite(event.target.value);
+                        dispatch({
+                            type: 'WRITE',
+                            payload: event.target.value,
+                        });
                     }}
                 />
                 <button onClick={() => {
-                    onCheck();
+                    dispatch({
+                        type: 'CHECK'
+                    });
                 }}
                 >Verify
                 </button>
@@ -115,12 +117,16 @@ function UseState({name}){
             <React.Fragment>
                 <p>Do you want to delete it?</p>
                 <button onClick={() => {
-                    onDelete();
+                    dispatch({
+                        type: 'DELETE'
+                    });
                 }}>
                     Yes, delete
                 </button>
                 <button onClick={() => {
-                    onReset()
+                    dispatch({
+                        type: 'RESET'
+                    });
                 }}>
                     No, return
                 </button>
@@ -131,7 +137,9 @@ function UseState({name}){
             <React.Fragment>
                 <p>Deleted Successfully</p>
                 <button onClick={() => {
-                    onReset()
+                    dispatch({
+                        type: 'RESET'
+                    });
                 }}>
                     Reset
                 </button>
@@ -140,4 +148,4 @@ function UseState({name}){
     };
 };
 
-export { UseState };
+export { UseReducer };
