@@ -8,31 +8,40 @@ const initialState = {
     confirmed: false,
 };
 
+const actionTypes = {
+    confirm: 'CONFIRM',
+    error: 'ERROR',
+    write: 'WRITE',
+    check: 'CHECK',
+    delete: 'DELETE',
+    reset: 'RESET'
+}
+
 const reducerObject = (state, payload) => ({
-    'CONFIRM': {
+    [actionTypes.confirm]: {
         ...state,
         error: false,
         loading:false,
         confirmed:true,
     },
-    'ERROR': {
+    [actionTypes.error]: {
         ...state,
         error: true,
         loading: false,
     },
-    'WRITE': {
+    [actionTypes.write]: {
         ...state,
         value: payload,
     },
-    'CHECK': {
+    [actionTypes.check]: {
         ...state,
         loading: true,
     },
-    'DELETE': {
+    [actionTypes.delete]: {
         ...state,
         deleted: true,
     },
-    'RESET': {
+    [actionTypes.reset]: {
         ...state,
         confirmed: false,
         deleted: false,
@@ -52,6 +61,43 @@ const reducer = (state, action) => {
 function UseReducer({name}){
     const [state, dispatch] = useReducer(reducer, initialState)
 
+    const onConfirm = () => {
+        dispatch({
+            type: actionTypes.confirm
+        })
+    };
+
+    const onError = () => {
+        dispatch({
+            type: actionTypes.error
+        })
+    };
+
+    const onWrite = (event) => {
+        dispatch({
+            type: actionTypes.write,
+            payload: event.target.value,
+        })
+    };
+
+    const onCheck = () => {
+        dispatch({
+            type: actionTypes.check
+        })
+    };
+
+    const onDelete = () => {
+        dispatch({
+            type: actionTypes.delete
+        })
+    };
+
+    const onReset = () => {
+        dispatch({
+            type: actionTypes.reset
+        })
+    };
+
     console.log(state);
 
     const SECURITY_CODE = "well"
@@ -64,15 +110,9 @@ function UseReducer({name}){
                 console.log("Verify");
 
                 if(state.value === SECURITY_CODE){
-                    dispatch({
-                        type: 'CONFIRM'
-                    });
-                    //onConfirm();
+                    onConfirm();
                 } else {
-                    dispatch({
-                        type: 'ERROR'
-                    });
-                    //onError();
+                    onError();
                 }
                 
                 console.log("End Verify");
@@ -96,19 +136,10 @@ function UseReducer({name}){
                 <input 
                     placeholder="Security code"
                     value={state.value}
-                    onChange={(event) => {
-                        dispatch({
-                            type: 'WRITE',
-                            payload: event.target.value,
-                        });
-                    }}
+                    onChange={onWrite}
                 />
-                <button onClick={() => {
-                    dispatch({
-                        type: 'CHECK'
-                    });
-                }}
-                >Verify
+                <button onClick={onCheck}>
+                    Verify
                 </button>
             </div>
         );
@@ -116,18 +147,10 @@ function UseReducer({name}){
         return(
             <React.Fragment>
                 <p>Do you want to delete it?</p>
-                <button onClick={() => {
-                    dispatch({
-                        type: 'DELETE'
-                    });
-                }}>
+                <button onClick={onDelete}>
                     Yes, delete
                 </button>
-                <button onClick={() => {
-                    dispatch({
-                        type: 'RESET'
-                    });
-                }}>
+                <button onClick={onReset}>
                     No, return
                 </button>
             </React.Fragment>
@@ -136,11 +159,7 @@ function UseReducer({name}){
         return(
             <React.Fragment>
                 <p>Deleted Successfully</p>
-                <button onClick={() => {
-                    dispatch({
-                        type: 'RESET'
-                    });
-                }}>
+                <button onClick={onReset}>
                     Reset
                 </button>
             </React.Fragment>
