@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useState } from "react";
 
 const initialState = {
     value: '',
@@ -8,99 +8,59 @@ const initialState = {
     confirmed: false,
 };
 
-const actionTypes = {
-    confirm: 'CONFIRM',
-    error: 'ERROR',
-    write: 'WRITE',
-    check: 'CHECK',
-    delete: 'DELETE',
-    reset: 'RESET'
-}
+function UseState({name}){
+    const [state, setState] = useState(initialState)
 
-const reducerObject = (state, payload) => ({
-    [actionTypes.confirm]: {
-        ...state,
-        error: false,
-        loading:false,
-        confirmed:true,
-    },
-    [actionTypes.error]: {
-        ...state,
-        error: true,
-        loading: false,
-    },
-    [actionTypes.write]: {
-        ...state,
-        value: payload,
-    },
-    [actionTypes.check]: {
-        ...state,
-        loading: true,
-    },
-    [actionTypes.delete]: {
-        ...state,
-        deleted: true,
-    },
-    [actionTypes.reset]: {
-        ...state,
-        confirmed: false,
-        deleted: false,
-        value: '',
-    }
-});
-
-const reducer = (state, action) => {
-    //se le pregunta que si dentro de ese objeto existe algun objeto que se llame como action.type[]
-    if(reducerObject(state)[action.type]){
-        return reducerObject(state, action.payload)[action.type]
-    } else {
-        return state;
-    }
-};
-
-function UseReducer({name}){
-    const [state, dispatch] = useReducer(reducer, initialState)
+    const SECURITY_CODE = "well"
 
     const onConfirm = () => {
-        dispatch({
-            type: actionTypes.confirm
+        setState({
+            ...state,
+            error: false,
+            loading:false,
+            confirmed:true,
         })
     };
 
     const onError = () => {
-        dispatch({
-            type: actionTypes.error
+        setState({
+            ...state,
+            error: true,
+            loading:false,
         })
     };
 
-    const onWrite = (event) => {
-        dispatch({
-            type: actionTypes.write,
-            payload: event.target.value,
+    const onWrite = (newValue) => {
+        setState({
+            ...state,
+            value: newValue,
         })
     };
 
     const onCheck = () => {
-        dispatch({
-            type: actionTypes.check
+        setState({
+            ...state,
+            loading: true
         })
     };
 
     const onDelete = () => {
-        dispatch({
-            type: actionTypes.delete
+        setState({
+            ...state,
+            deleted: true,
         })
     };
 
     const onReset = () => {
-        dispatch({
-            type: actionTypes.reset
+        setState({
+            ...state,
+            confirmed: false,
+            deleted: false,
+            value: '',
         })
     };
 
     console.log(state);
-
-    const SECURITY_CODE = "well"
 
     useEffect(() => {
         console.log("Start Effect");
@@ -136,7 +96,9 @@ function UseReducer({name}){
                 <input 
                     placeholder="Security code"
                     value={state.value}
-                    onChange={onWrite}
+                    onChange={(event) => {
+                        onWrite(event.target.value)
+                    }}
                 />
                 <button onClick={onCheck}>
                     Verify
@@ -147,10 +109,14 @@ function UseReducer({name}){
         return(
             <React.Fragment>
                 <p>Do you want to delete it?</p>
-                <button onClick={onDelete}>
+                <button onClick={() => {
+                    onDelete()
+                }}>
                     Yes, delete
                 </button>
-                <button onClick={onReset}>
+                <button onClick={() => {
+                    onReset()
+                }}>
                     No, return
                 </button>
             </React.Fragment>
@@ -159,7 +125,9 @@ function UseReducer({name}){
         return(
             <React.Fragment>
                 <p>Deleted Successfully</p>
-                <button onClick={onReset}>
+                <button onClick={() => {
+                    onReset()
+                }}>
                     Reset
                 </button>
             </React.Fragment>
@@ -167,4 +135,4 @@ function UseReducer({name}){
     };
 };
 
-export { UseReducer };
+export { UseState };
